@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:covid19/Model/MyClipper.dart';
+import 'package:covid19/Model/CardWidget.dart';
 
 List _countries = List();
-int totalCases, population, deaths, todayCases, todayDeaths;
+var totalCases, population, deaths, todayCases, todayDeaths;
 
 class HomePage extends StatefulWidget {
   @override
@@ -32,6 +33,20 @@ class _HomePageState extends State<HomePage> {
       deaths = data['deaths'];
       todayCases = data['todayCases'];
       todayDeaths = data['todayDeaths'];
+      if (totalCases.toString().length > 3) {
+        totalCases = totalCases / 1000;
+        totalCases = totalCases.toString() + " k";
+      }
+      if (deaths.toString().length > 3) {
+        deaths = deaths / 1000;
+        deaths = deaths.toString() + " k";
+      }
+      if (todayCases != 0) {
+        todayCases = todayCases.toString() + " +";
+      }
+      if (todayDeaths != 0) {
+        todayDeaths = todayDeaths.toString() + " +";
+      }
     });
   }
 
@@ -56,7 +71,8 @@ class _HomePageState extends State<HomePage> {
                 gradient: LinearGradient(
                     colors: [Color(0xFF3383CD), Color(0xFF11249F)]),
                 image: DecorationImage(
-                    image: AssetImage('assets/images/virus.png')),
+                    image: AssetImage(
+                      'assets/images/virus.png')),
               ),
               child: Stack(
                 children: [
@@ -137,12 +153,55 @@ class _HomePageState extends State<HomePage> {
           SizedBox(
             height: 20,
           ),
-          Text("Total cases : ${totalCases}") ,
-          Text("Total death : ${deaths}") ,
-          Text("Todays death : ${todayDeaths}") ,
-          Text("Total  population: ${population}"),
-          Text("Todays cases: ${todayCases}"),
-
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  myCard(
+                      belowText: "Cases",
+                      data: totalCases.toString(),
+                      textColor: Colors.orange[700]),
+                  myCard(
+                      belowText: "Deaths",
+                      data: deaths.toString(),
+                      textColor: Colors.red),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  myCard(
+                      belowText: "Today Cases",
+                      data: todayCases.toString(),
+                      textColor: Colors.orange[700]),
+                  myCard(
+                      belowText: "Today deaths",
+                      data: todayDeaths.toString(),
+                      textColor: Colors.red
+                    ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 26,),
+          Center(
+            child: Text(
+              "Made by Jayant Saksham with ❤️",
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+          )
         ],
       ),
     );
